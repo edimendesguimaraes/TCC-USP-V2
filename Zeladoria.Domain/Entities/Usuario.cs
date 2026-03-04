@@ -6,8 +6,10 @@ public class Usuario
     public string ExternalAuthId { get; private set; }
     public string Nome { get; private set; }
     public string Email { get; private set; }
-    public int Pontos { get; private set; } 
+    public int Pontos { get; private set; }
+    public string? FcmToken { get; set; }
     public DateTime DataCadastro { get; private set; }
+
 
     protected Usuario() { }
     public Usuario(string externalAuthId, string nome, string email)
