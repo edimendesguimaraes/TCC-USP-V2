@@ -28,9 +28,7 @@ public class AuthController : ControllerBase
     {
         try
         {            
-            FirebaseToken decodedToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(dto.TokenFirebase);
-
-            // 2. Extraímos os dados 100% confiáveis que vieram do Google
+            FirebaseToken decodedToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(dto.TokenFirebase);            
             string externalAuthId = decodedToken.Uid;
             string email = decodedToken.Claims.ContainsKey("email") ? decodedToken.Claims["email"].ToString() : "";
             string nome = decodedToken.Claims.ContainsKey("name") ? decodedToken.Claims["name"].ToString() : "Cidadão";
