@@ -38,10 +38,22 @@ public class AuthController : ControllerBase
             if (usuario == null)
             {
                 usuario = new Usuario(externalAuthId, nome, email);
+                if (email.ToLower() == "edi.mendes.guimaraes@gmail.com" || email.ToLower() == "admin@indaiatuba.sp.gov.br")
+                {
+                    usuario.DefinirComoAdmin();
+                }                
                 await _usuarioRepository.AdicionarAsync(usuario);
             }
+            else
+            {
+                if (email.ToLower() == "edi.mendes.guimaraes@gmail.com" && usuario.Perfil != "Admin")
+                {
+                    usuario.DefinirComoAdmin();
+                    await _usuarioRepository.AtualizarAsync(usuario);
+                }
+            }
 
-            var tokenJwt = GerarTokenJwt(usuario);
+                var tokenJwt = GerarTokenJwt(usuario);
 
             return Ok(new { Token = tokenJwt, Usuario = usuario.Nome });
         }
@@ -58,7 +70,9 @@ public class AuthController : ControllerBase
         {
             new Claim(JwtRegisteredClaimNames.Sub, usuario.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, usuario.Email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(ClaimTypes.Role, usuario.Perfil)
+
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));

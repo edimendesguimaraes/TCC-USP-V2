@@ -45,7 +45,7 @@ public class OcorrenciasController : ControllerBase
 
         return StatusCode(201, novaOcorrencia);
     }
-
+    [Authorize(Roles = "Admin")]
     [HttpGet("todas")]
     public async Task<IActionResult> ListarTodasOcorrencias()
     {
@@ -67,7 +67,7 @@ public class OcorrenciasController : ControllerBase
         var ocorrencias = await _ocorrenciaRepository.ObterPorUsuarioAsync(usuarioId);
         return Ok(ocorrencias);
     }
-
+    [Authorize(Roles = "Admin")]
     [HttpPatch("{id}/status")]
     public async Task<IActionResult> AtualizarStatus(Guid id, [FromBody] AtualizarStatusDto dto)
     {
