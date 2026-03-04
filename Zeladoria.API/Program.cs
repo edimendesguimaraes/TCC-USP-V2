@@ -2,12 +2,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using Microsoft.OpenApi.Models; // <-- O .Models voltou para casa!
+using Microsoft.OpenApi.Models; 
 using System.Text;
 using Zeladoria.Domain.Interfaces;
 using Zeladoria.Infrastructure.Data;
 using Zeladoria.Infrastructure.Repositories;
-
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
+using Zeladoria.Infrastructure.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Configura a Autenticação JWT
@@ -58,6 +60,15 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddDbContext<ZeladoriaDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// 1. Inicializa o motor do Firebase com o seu JSON de segurança
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile(Path.Combine(AppContext.BaseDirectory, "firebase-key.json"))
+});
+
+// 2. Registra o nosso novo serviço de notificação
+builder.Services.AddScoped<INotificationService, FirebaseNotificationService>();
 
 builder.Services.AddScoped<IOcorrenciaRepository, OcorrenciaRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();

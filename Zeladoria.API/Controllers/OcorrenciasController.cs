@@ -13,12 +13,17 @@ namespace Zeladoria.API.Controllers;
 public class OcorrenciasController : ControllerBase
 {
     private readonly IOcorrenciaRepository _ocorrenciaRepository;
-    private readonly IUsuarioRepository _usuarioRepository; 
+    private readonly IUsuarioRepository _usuarioRepository;
+    private readonly INotificationService _notificationService; 
 
-    public OcorrenciasController(IOcorrenciaRepository ocorrenciaRepository, IUsuarioRepository usuarioRepository)
+    public OcorrenciasController(
+        IOcorrenciaRepository ocorrenciaRepository,
+        IUsuarioRepository usuarioRepository,
+        INotificationService notificationService) 
     {
         _ocorrenciaRepository = ocorrenciaRepository;
         _usuarioRepository = usuarioRepository;
+        _notificationService = notificationService;
     }
 
     [HttpPost]
@@ -30,19 +35,17 @@ public class OcorrenciasController : ControllerBase
 
         var novaOcorrencia = new Ocorrencia(usuarioId, dto.Titulo, dto.Descricao, dto.Categoria, dto.Latitude, dto.Longitude, dto.FotoUrl);
         await _ocorrenciaRepository.AdicionarAsync(novaOcorrencia);
-
-        // GAMIFICAÇÃO: Dá 10 pontos pela criação
+        
         var usuario = await _usuarioRepository.ObterPorIdAsync(usuarioId);
         if (usuario != null)
         {
             usuario.AdicionarPontos(10);
-            await _usuarioRepository.AtualizarAsync(usuario);            
+            await _usuarioRepository.AtualizarAsync(usuario);
         }
 
         return StatusCode(201, novaOcorrencia);
     }
 
-    
     [HttpGet("todas")]
     public async Task<IActionResult> ListarTodasOcorrencias()
     {
@@ -54,7 +57,6 @@ public class OcorrenciasController : ControllerBase
         return Ok(ocorrencias);
     }
 
-    // NOVA ROTA OTIMIZADA PARA O APLICATIVO
     [HttpGet("minhas")]
     public async Task<IActionResult> ListarMinhasOcorrencias()
     {
@@ -71,18 +73,35 @@ public class OcorrenciasController : ControllerBase
     {
         var ocorrencia = await _ocorrenciaRepository.ObterPorIdAsync(id);
         if (ocorrencia == null) return NotFound("Ocorrência não encontrada.");
-
-        // GAMIFICAÇÃO: Atualiza o status e pega quantos pontos extras a pessoa ganhou
+        
         int pontosGanhos = ocorrencia.AtualizarStatus(dto.NovoStatus, dto.RespostaPrefeitura);
         await _ocorrenciaRepository.AtualizarAsync(ocorrencia);
-
-        if (pontosGanhos > 0)
+        
+        var usuario = await _usuarioRepository.ObterPorIdAsync(ocorrencia.UsuarioId);
+        if (usuario != null)
         {
-            var usuario = await _usuarioRepository.ObterPorIdAsync(ocorrencia.UsuarioId);
-            if (usuario != null)
+            // Salva os pontos se houver
+            if (pontosGanhos > 0)
             {
-                usuario.AdicionarPontos(pontosGanhos);                
+                usuario.AdicionarPontos(pontosGanhos);
                 await _usuarioRepository.AtualizarAsync(usuario);
+            }
+
+            // 🚀 4. O GATILHO DA NOTIFICAÇÃO!
+            if (!string.IsNullOrEmpty(usuario.FcmToken))
+            {
+                // Montamos a mensagem amigável para o cidadão
+                string titulo = "Sua ocorrência foi atualizada! 🔔";
+                string corpo = $"O problema '{ocorrencia.Titulo}' mudou para o status: {dto.NovoStatus}.";
+
+                // Se a prefeitura mandou resposta, a gente avisa
+                if (!string.IsNullOrEmpty(dto.RespostaPrefeitura))
+                {
+                    corpo += " Toque para ver a resposta da prefeitura.";
+                }
+
+                // Dispara o e-mail fantasma pro Firebase entregar no celular!
+                await _notificationService.EnviarNotificacaoAsync(usuario.FcmToken, titulo, corpo);
             }
         }
 

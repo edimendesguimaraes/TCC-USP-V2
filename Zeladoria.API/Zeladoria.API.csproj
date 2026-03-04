@@ -27,6 +27,12 @@
     <ProjectReference Include="..\Zeladoria.Infrastructure\Zeladoria.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="firebase-key.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
 
 

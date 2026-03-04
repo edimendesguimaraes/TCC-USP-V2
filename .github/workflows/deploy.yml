@@ -19,5 +19,5 @@ jobs:
             cd ~/TCC-USP
             git pull origin main
             sudo docker build -t api-tcc-git .
-            sudo docker rm -f tcc-backend || true            
-            sudo docker run -d -p 80:8080 --name tcc-backend --env-file ~/prod.env api-tcc-git
+            sudo docker rm -f tcc-backend || true                        
+            sudo docker run -d -p 80:8080 --name tcc-backend --env-file ~/prod.env -v ~/firebase-key.json:/app/firebase-key.json api-tcc-git
