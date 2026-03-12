@@ -28,7 +28,7 @@ jobs:
             git reset --hard origin/main
             
             # Derruba a arquitetura antiga da V2 (se estiver rodando)
-            sudo docker-compose down || true
+            sudo docker compose down || true
             
             # Sobe os novos containers reconstruindo as imagens
-            sudo docker-compose up -d --build
+            sudo docker compose up -d --build
