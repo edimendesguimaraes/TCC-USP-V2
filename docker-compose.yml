@@ -1,32 +1,34 @@
-version: '3.8'
+name: Deploy Automático na Oracle Cloud (Microsserviços)
 
-services:
-  identity-api:
-    build:
-      context: .
-      dockerfile: Zeladoria.Identity.API/Dockerfile
-    environment:
-      # Puxa os valores diretamente do arquivo .env
-      - ConnectionStrings__DefaultConnection=${DEFAULT_CONNECTION}
-      - Jwt__Key=${JWT_KEY}
+on:
+  push:
+    branches:
+      - main # O script só roda quando você mandar código para a branch main
 
-  ocorrencias-api:
-    build:
-      context: .
-      dockerfile: Zeladoria.Ocorrencias.API/Dockerfile
-    environment:
-      - ConnectionStrings__DefaultConnection=${DEFAULT_CONNECTION}
-      - Jwt__Key=${JWT_KEY}
-
-  gateway-api:
-    build:
-      context: .
-      dockerfile: Zeladoria.Gateway.API/Dockerfile
-    environment:
-      - ReverseProxy__Clusters__identity-cluster__Destinations__destination1__Address=http://identity-api:8080
-      - ReverseProxy__Clusters__ocorrencias-cluster__Destinations__destination1__Address=http://ocorrencias-api:8080
-    ports:
-      - "9000:8080" 
-    depends_on:
-      - identity-api
-      - ocorrencias-api
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Acessar servidor e atualizar a API
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Entra na nossa nova casa V2
+            cd ~/tcc-v2
+            
+            # Inicia o repositório e conecta com o seu Git novo (se já não estiver)
+            git init
+            git remote add origin https://github.com/edimendesguimaraes/TCC-USP-V2.git || true
+            git fetch
+            
+            # Puxa o código novo forçando a sobrescrever os arquivos (mas preserva o .env e o firebase ocultos)
+            git reset --hard origin/main
+            
+            # Derruba a arquitetura antiga da V2 (se estiver rodando)
+            sudo docker compose down || true
+            
+            # Sobe os novos containers reconstruindo as imagens ss
+            sudo docker compose up -d --build
