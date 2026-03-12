@@ -1,0 +1,34 @@
+name: Deploy Automático na Oracle Cloud (Microsserviços)
+
+on:
+  push:
+    branches:
+      - main # O script só roda quando você mandar código para a branch main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Acessar servidor e atualizar a API
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Entra na nossa nova casa V2
+            cd ~/tcc-v2
+            
+            # Inicia o repositório e conecta com o seu Git novo (se já não estiver)
+            git init
+            git remote add origin https://github.com/edimendesguimaraes/TCC-USP-V2.git || true
+            git fetch
+            
+            # Puxa o código novo forçando a sobrescrever os arquivos (mas preserva o .env e o firebase ocultos)
+            git reset --hard origin/main
+            
+            # Derruba a arquitetura antiga da V2 (se estiver rodando)
+            sudo docker-compose down || true
+            
+            # Sobe os novos containers reconstruindo as imagens
+            sudo docker-compose up -d --build
