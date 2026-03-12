@@ -2,8 +2,10 @@
   <Folder Name="/Itens de Solução/">
     <File Path="Dockerfile" />
   </Folder>
-  <Project Path="Zeladoria.API/Zeladoria.API.csproj" />
   <Project Path="Zeladoria.Application/Zeladoria.Application.csproj" />
   <Project Path="Zeladoria.Domain/Zeladoria.Domain.csproj" />
+  <Project Path="Zeladoria.Gateway.API/Zeladoria.Gateway.API.csproj" />
+  <Project Path="Zeladoria.Identity.API/Zeladoria.Identity.API.csproj" />
   <Project Path="Zeladoria.Infrastructure/Zeladoria.Infrastructure.csproj" />
+  <Project Path="Zeladoria.Ocorrencias.API/Zeladoria.Ocorrencias.API.csproj" />
 </Solution>

@@ -8,7 +8,7 @@ using Zeladoria.Application.DTOs;
 using Zeladoria.Domain.Entities;
 using Zeladoria.Domain.Interfaces;
 
-namespace Zeladoria.API.Controllers;
+namespace Zeladoria.Identity.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

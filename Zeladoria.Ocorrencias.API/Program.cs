@@ -1,18 +1,19 @@
+using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
-using Microsoft.OpenApi.Models; 
 using System.Text;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Zeladoria.Domain.Interfaces;
 using Zeladoria.Infrastructure.Data;
 using Zeladoria.Infrastructure.Repositories;
-using FirebaseAdmin;
-using Google.Apis.Auth.OAuth2;
 using Zeladoria.Infrastructure.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Configura a Autenticação JWT
+// Configura Autenticação JWT (Necessário para validar os tokens gerados pela Identity.API)
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new ArgumentNullException("Jwt:Key não configurada");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -33,45 +34,25 @@ builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// 2. Configura o Swagger Padrão Estável
 builder.Services.AddSwaggerGen(c =>
 {
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Insira APENAS o token JWT gerado no login."
-    });
-
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-            },
-            Array.Empty<string>()
-        }
-    });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme { Name = "Authorization", Type = SecuritySchemeType.Http, Scheme = "Bearer", BearerFormat = "JWT", In = ParameterLocation.Header });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement { { new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } }, Array.Empty<string>() } });
 });
 
 builder.Services.AddDbContext<ZeladoriaDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 1. Inicializa o motor do Firebase com o seu JSON de segurança
+// Inicializa o Firebase (Necessário para o envio de Push Notifications)
 FirebaseApp.Create(new AppOptions()
 {
     Credential = GoogleCredential.FromFile(Path.Combine(AppContext.BaseDirectory, "firebase-key.json"))
 });
 
-// 2. Registra o nosso novo serviço de notificação
+// Injeções para o contexto de Ocorrências
 builder.Services.AddScoped<INotificationService, FirebaseNotificationService>();
-
 builder.Services.AddScoped<IOcorrenciaRepository, OcorrenciaRepository>();
-builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>(); // Partilhado para gerir pontos
 
 var app = builder.Build();
 
@@ -82,6 +63,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapGet("/", () => "API Segura com JWT rodando 100%!");
+app.MapGet("/", () => "Ocorrencias API rodando!");
 
 app.Run();

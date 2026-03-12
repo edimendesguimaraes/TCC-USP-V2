@@ -1,0 +1,6 @@
+@Zeladoria.Identity.API_HostAddress = http://localhost:5079
+
+GET {{Zeladoria.Identity.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
