@@ -9,7 +9,7 @@ services:
       - ConnectionStrings__DefaultConnection=${DEFAULT_CONNECTION}
       - Jwt__Key=${JWT_KEY}
     volumes:
-      # Injeta o arquivo do Firebase do Linux para dentro do contêiner
+      # Mapeia o arquivo do firebase para o volume interno
       - ./firebase-key.json:/app/firebase-key.json
 
   ocorrencias-api:
@@ -20,7 +20,7 @@ services:
       - ConnectionStrings__DefaultConnection=${DEFAULT_CONNECTION}
       - Jwt__Key=${JWT_KEY}
     volumes:
-      # Injeta o arquivo do Firebase do Linux para dentro do contêiner
+      # Mapeia o arquivo do firebase para o volume interno
       - ./firebase-key.json:/app/firebase-key.json
 
   gateway-api:

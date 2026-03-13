@@ -33,9 +33,13 @@ public class OcorrenciasController : ControllerBase
         if (string.IsNullOrEmpty(usuarioIdClaim) || !Guid.TryParse(usuarioIdClaim, out var usuarioId))
             return Unauthorized("Token inválido.");
 
-        var novaOcorrencia = new Ocorrencia(usuarioId, dto.Titulo, dto.Descricao, dto.Categoria, dto.Latitude, dto.Longitude, dto.FotoUrl);
+        // 👇 Lemos o "crachá" do JWT
+        var nomeCidadao = User.FindFirst(ClaimTypes.Name)?.Value ?? "Cidadão Anônimo";
+
+        // 👇 Passamos o nomeCidadao para o construtor da Ocorrência
+        var novaOcorrencia = new Ocorrencia(usuarioId, nomeCidadao, dto.Titulo, dto.Descricao, dto.Categoria, dto.Latitude, dto.Longitude, dto.FotoUrl);
         await _ocorrenciaRepository.AdicionarAsync(novaOcorrencia);
-        
+
         var usuario = await _usuarioRepository.ObterPorIdAsync(usuarioId);
         if (usuario != null)
         {

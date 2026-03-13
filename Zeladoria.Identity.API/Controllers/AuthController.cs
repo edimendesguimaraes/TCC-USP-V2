@@ -63,16 +63,16 @@ public class AuthController : ControllerBase
             return Unauthorized(new { Erro = "Acesso Negado. Token do Google inválido ou forjado." });
         }
     }
-
+ 
     private string GerarTokenJwt(Usuario usuario)
     {
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, usuario.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, usuario.Email),
+            new Claim(JwtRegisteredClaimNames.Email, usuario.Email),            
+            new Claim(ClaimTypes.Name, usuario.Nome),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(ClaimTypes.Role, usuario.Perfil)
-
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
@@ -82,7 +82,7 @@ public class AuthController : ControllerBase
             issuer: _configuration["Jwt:Issuer"],
             audience: _configuration["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddHours(2), // O token vale por 2 horas
+            expires: DateTime.UtcNow.AddHours(2),
             signingCredentials: creds
         );
 
