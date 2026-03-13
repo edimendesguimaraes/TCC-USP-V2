@@ -1,11 +1,13 @@
 <Solution>
   <Folder Name="/Itens de Solução/">
-    <File Path="Dockerfile" />
+    <File Path=".env" />
+    <File Path="docker-compose.yml" />
+    <File Path="ssh-key-oracle-tcc.key" />
   </Folder>
-  <Project Path="Zeladoria.Application/Zeladoria.Application.csproj" />
-  <Project Path="Zeladoria.Domain/Zeladoria.Domain.csproj" />
-  <Project Path="Zeladoria.Gateway.API/Zeladoria.Gateway.API.csproj" />
-  <Project Path="Zeladoria.Identity.API/Zeladoria.Identity.API.csproj" />
-  <Project Path="Zeladoria.Infrastructure/Zeladoria.Infrastructure.csproj" />
-  <Project Path="Zeladoria.Ocorrencias.API/Zeladoria.Ocorrencias.API.csproj" />
+  <Project Path="../../../../../../../../D/Estudos/PosGraduacao/TCC/TCC-Indaiatuba-Backend/Zeladoria.Application/Zeladoria.Application.csproj" />
+  <Project Path="../../../../../../../../D/Estudos/PosGraduacao/TCC/TCC-Indaiatuba-Backend/Zeladoria.Domain/Zeladoria.Domain.csproj" />
+  <Project Path="../../../../../../../../D/Estudos/PosGraduacao/TCC/TCC-Indaiatuba-Backend/Zeladoria.Gateway.API/Zeladoria.Gateway.API.csproj" />
+  <Project Path="../../../../../../../../D/Estudos/PosGraduacao/TCC/TCC-Indaiatuba-Backend/Zeladoria.Identity.API/Zeladoria.Identity.API.csproj" />
+  <Project Path="../../../../../../../../D/Estudos/PosGraduacao/TCC/TCC-Indaiatuba-Backend/Zeladoria.Infrastructure/Zeladoria.Infrastructure.csproj" />
+  <Project Path="../../../../../../../../D/Estudos/PosGraduacao/TCC/TCC-Indaiatuba-Backend/Zeladoria.Ocorrencias.API/Zeladoria.Ocorrencias.API.csproj" />
 </Solution>
