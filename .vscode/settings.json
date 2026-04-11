@@ -1,0 +1,15 @@
+{
+  "sqltools.connections": [
+    {
+      "ssh": "Disabled",
+      "previewLimit": 50,
+      "server": "157.151.23.157",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "name": "Oracle Cloud Zeladoria",
+      "database": "ZeladoriaDB",
+      "username": "postgres",
+      "password": "!#3Dimilson"
+    }
+  ]
+}
