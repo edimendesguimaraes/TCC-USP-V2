@@ -1,6 +1,6 @@
 # TCC — Plataforma de Zeladoria Urbana de Indaiatuba
 
-Projeto de Trabalho de Conclusão de Curso (TCC / MBA) que implementa uma plataforma de zeladoria urbana com aplicativo mobile Flutter e backend em microserviços .NET hospedado na Oracle Cloud Infrastructure (OCI).
+Projeto de Trabalho de Conclusão de Curso do MBA em Engenharia de Software, que implementa uma plataforma de zeladoria urbana com aplicativo mobile Flutter e backend em microserviços .NET hospedado na Oracle Cloud Infrastructure (OCI).
 
 ---
 
