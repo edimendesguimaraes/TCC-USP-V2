@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Zeladoria.Identity.API/Dockerfile
+    restart: unless-stopped
     environment:
       - ConnectionStrings__DefaultConnection=${DEFAULT_CONNECTION}
       - Jwt__Key=${JWT_KEY}
@@ -16,6 +17,7 @@ services:
     build:
       context: .
       dockerfile: Zeladoria.Ocorrencias.API/Dockerfile
+    restart: unless-stopped
     environment:
       - ConnectionStrings__DefaultConnection=${DEFAULT_CONNECTION}
       - Jwt__Key=${JWT_KEY}
@@ -27,6 +29,7 @@ services:
     build:
       context: .
       dockerfile: Zeladoria.Gateway.API/Dockerfile
+    restart: unless-stopped
     environment:
       - ReverseProxy__Clusters__identity-cluster__Destinations__destination1__Address=http://identity-api:8080
       - ReverseProxy__Clusters__ocorrencias-cluster__Destinations__destination1__Address=http://ocorrencias-api:8080
